@@ -12,9 +12,9 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Literal
 
-# Example schemas (replace with your own):
+# Example schemas (you can keep these for reference):
 
 class User(BaseModel):
     """
@@ -38,8 +38,27 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Crypto dashboard schemas
+
+class Wallet(BaseModel):
+    """
+    Wallet collection schema
+    Collection name: "wallet"
+    """
+    owner: str = Field("default", description="Wallet owner identifier")
+    balance: float = Field(0, ge=0, description="Current wallet balance in USD-equivalent")
+    currency: str = Field("USD", description="Display currency")
+
+class Transaction(BaseModel):
+    """
+    Transactions collection schema
+    Collection name: "transaction"
+    """
+    owner: str = Field("default", description="Wallet owner identifier")
+    type: Literal["deposit", "withdrawal"] = Field(..., description="Transaction type")
+    amount: float = Field(..., gt=0, description="Transaction amount")
+    balance_after: Optional[float] = Field(None, ge=0, description="Balance after this transaction")
+    note: Optional[str] = Field(None, description="Optional note")
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
